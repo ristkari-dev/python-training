@@ -8,7 +8,7 @@ from importlib.resources import as_file, files
 from pathlib import Path
 from string import Template
 
-_NAME_RE = re.compile(r"^(\d{2})-([a-z][a-z0-9]*(?:-[a-z0-9]+)*)$")
+_NAME_RE = re.compile(r"^(\d{2})-([a-z][a-z0-9]*(?:-[a-z0-9]+)*)\Z")
 
 
 def parse_name(raw: str) -> tuple[str, str, str]:
@@ -55,7 +55,7 @@ def _copy_with_substitution(
             _copy_with_substitution(entry, target / entry.name, substitutions)
             continue
         if entry.suffix == ".tmpl":
-            rendered = Template(entry.read_text()).substitute(substitutions)
-            (target / entry.stem).write_text(rendered)
+            rendered = Template(entry.read_text(encoding="utf-8")).substitute(substitutions)
+            (target / entry.stem).write_text(rendered, encoding="utf-8")
         else:
             shutil.copy2(entry, target / entry.name)
