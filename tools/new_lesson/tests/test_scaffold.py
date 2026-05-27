@@ -1,3 +1,5 @@
+import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -76,3 +78,40 @@ class TestScaffold:
         scaffold("99-demo", lessons)
         with pytest.raises(FileExistsError):
             scaffold("99-demo", lessons)
+
+
+class TestCli:
+    def test_creates_lesson_via_subprocess(self, tmp_path: Path) -> None:
+        lessons = tmp_path / "lessons"
+        result = subprocess.run(
+            [
+                sys.executable,
+                "-m",
+                "new_lesson",
+                "42-end-to-end",
+                "--lessons-dir",
+                str(lessons),
+            ],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        assert "created" in result.stdout
+        assert (lessons / "42-end-to-end" / "README.md").exists()
+
+    def test_invalid_name_exits_nonzero(self, tmp_path: Path) -> None:
+        result = subprocess.run(
+            [
+                sys.executable,
+                "-m",
+                "new_lesson",
+                "BAD",
+                "--lessons-dir",
+                str(tmp_path / "lessons"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        assert result.returncode == 1
+        assert "invalid lesson name" in result.stderr
