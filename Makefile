@@ -50,3 +50,13 @@ new-lesson: ## Scaffold a new lesson (NAME=NN-name)
 slides-dev: ## Serve one lesson's deck locally on http://localhost:8000 (LESSON=NN-name)
 	@test -n "$(LESSON)" || (echo "usage: make slides-dev LESSON=NN-name" && exit 1)
 	uv run python -m slides_dev --lesson $(LESSON) --repo-root $(REPO_ROOT)
+
+.PHONY: slides-build
+slides-build: ## Build the static slides site into dist/
+	uv run python -m build_index --lessons lessons --shared shared/reveal --out dist
+
+.PHONY: slides-docker
+slides-docker: ## Build the deploy image and run it locally on http://localhost:8080
+	docker build -t python-training-slides:local -f deploy/Dockerfile .
+	@echo "starting container on http://localhost:8080  (Ctrl-C to stop)"
+	docker run --rm -p 8080:8080 -e PORT=8080 python-training-slides:local
