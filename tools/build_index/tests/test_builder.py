@@ -66,6 +66,10 @@ class TestRenderIndex:
         assert "Hello, Python" in html
         assert "Distributed patterns &amp; wrap-up" in html
 
+    def test_published_lesson_not_also_future(self) -> None:
+        html = render_index({"01-hello"})
+        assert html.count('class="lesson future"') == 27
+
 
 class TestBuild:
     def test_produces_index_and_copies(self, tmp_path: Path) -> None:

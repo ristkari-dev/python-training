@@ -62,6 +62,8 @@ def render_index(published: set[str]) -> str:
 
 
 def _render_lesson(lesson: LessonInfo, published: set[str]) -> str:
+    # number/dir_name come from the trusted catalog (digits + kebab slug,
+    # enforced by catalog tests); title/blurb are free text so they're escaped.
     title = escape_html(lesson.title)
     blurb = escape_html(lesson.blurb)
     number = lesson.number
