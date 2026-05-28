@@ -47,3 +47,7 @@ docs/               design docs and implementation plans
 
 See [`docs/superpowers/specs/2026-05-25-python-course-design.md`](docs/superpowers/specs/2026-05-25-python-course-design.md)
 for the course design.
+
+## Contributing
+
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the lesson conventions and dev workflow.
