@@ -45,3 +45,8 @@ def test_slugs_are_kebab_case() -> None:
 def test_dir_name_combines_number_and_slug() -> None:
     first = ALL_LESSONS[0]
     assert first.dir_name() == f"{first.number}-{first.slug}"
+
+
+def test_slugs_are_unique() -> None:
+    slugs = [lesson.slug for lesson in ALL_LESSONS]
+    assert len(slugs) == len(set(slugs)), "duplicate slugs found"
