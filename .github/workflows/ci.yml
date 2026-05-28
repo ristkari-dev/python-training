@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Sync workspace
+        run: uv sync --frozen --all-packages
+
+      - name: Lint (ruff)
+        run: uv run ruff check .
+
+      - name: Format check (ruff)
+        run: uv run ruff format --check .
+
+      - name: Type-check (mypy)
+        run: uv run mypy tools/new_lesson/src tools/slides_dev/src tools/build_index/src
+
+      - name: Tool tests
+        run: uv run pytest tools
+
+      - name: Build static slides site
+        run: make slides-build
+
+      - name: Verify dist contents
+        run: |
+          test -f dist/index.html
+          grep -q "Python Training" dist/index.html
