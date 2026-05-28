@@ -8,7 +8,7 @@ from http.server import HTTPServer
 from pathlib import Path
 
 import pytest
-from slides_dev.server import build_handler, resolve_lesson
+from slides_dev.server import _resolve, build_handler, resolve_lesson
 
 
 def _make_repo(tmp_path: Path) -> Path:
@@ -90,3 +90,39 @@ class TestHandler:
         with pytest.raises(urllib.error.HTTPError) as exc:
             urllib.request.urlopen(f"{url}/nope.txt")
         assert exc.value.code == 404
+
+
+class TestResolveGuard:
+    def test_traversal_escape_returns_none(self, tmp_path: Path) -> None:
+        slides_root = tmp_path / "lessons" / "01-hello" / "slides"
+        slides_root.mkdir(parents=True)
+        shared_root = tmp_path / "shared" / "reveal"
+        shared_root.mkdir(parents=True)
+        secret = tmp_path / "secret.txt"
+        secret.write_text("top secret")
+        # A relative path that climbs out of slides_root must be rejected.
+        assert _resolve("../../../secret.txt", slides_root, shared_root) is None
+
+    def test_shared_traversal_escape_returns_none(self, tmp_path: Path) -> None:
+        slides_root = tmp_path / "lessons" / "01-hello" / "slides"
+        slides_root.mkdir(parents=True)
+        shared_root = tmp_path / "shared" / "reveal"
+        shared_root.mkdir(parents=True)
+        secret = tmp_path / "secret.txt"
+        secret.write_text("top secret")
+        # Climbing out via the shared/reveal/ prefix must also be rejected.
+        assert (
+            _resolve("shared/reveal/../../../secret.txt", slides_root, shared_root)
+            is None
+        )
+
+    def test_legitimate_nested_path_resolves(self, tmp_path: Path) -> None:
+        slides_root = tmp_path / "lessons" / "01-hello" / "slides"
+        (slides_root / "assets").mkdir(parents=True)
+        shared_root = tmp_path / "shared" / "reveal"
+        shared_root.mkdir(parents=True)
+        diagram = slides_root / "assets" / "diagram.svg"
+        diagram.write_text("<svg></svg>")
+        result = _resolve("assets/diagram.svg", slides_root, shared_root)
+        assert result is not None
+        assert result.name == "diagram.svg"
