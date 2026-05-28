@@ -41,4 +41,4 @@ Conventional Commits: `feat(lesson-04): ...`, `fix(slides_dev): ...`, `docs: ...
 
 ## Tests as spec
 
-`exercises/test_*.py` files define what "done" means. Students make those tests pass; the solutions/ copy must keep the same tests green. Drift between the two is caught in CI.
+`exercises/test_*.py` files define what "done" means. Students make those tests pass; the solutions/ copy must keep the same tests green. Drift between the two will be caught in CI once it is set up in a later plan.

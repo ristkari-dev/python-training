@@ -12,7 +12,7 @@ sync: ## Install/refresh the workspace venv (uv sync --all-packages)
 	uv sync --all-packages
 
 .PHONY: test
-test: ## Run solution tests (the ones that should always pass)
+test: ## Run tool + lesson-solution tests (the ones that should always pass)
 	@dirs=$$(find lessons -type d -name solutions 2>/dev/null); \
 	if [ -z "$$dirs" ]; then echo "no solution directories yet"; else uv run pytest tools $$dirs; fi
 

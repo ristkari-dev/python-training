@@ -11,7 +11,7 @@ packaging, observability, and deployment.
   curl -LsSf https://astral.sh/uv/install.sh | sh
   ```
 - Make
-- Docker (only for `make slides-docker`)
+- Docker (only for `make slides-docker`, added in a later plan)
 
 `uv` reads `.python-version` and installs the right Python automatically — no
 separate `pyenv` or system Python step needed.
