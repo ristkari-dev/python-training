@@ -15,6 +15,7 @@ env/
 
 # Build artifacts
 dist/
+!shared/reveal/dist/
 build/
 *.egg-info/
 *.egg

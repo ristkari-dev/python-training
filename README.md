@@ -11,7 +11,7 @@ packaging, observability, and deployment.
   curl -LsSf https://astral.sh/uv/install.sh | sh
   ```
 - Make
-- Docker (only for `make slides-docker`)
+- Docker (only for `make slides-docker`, added in a later plan)
 
 `uv` reads `.python-version` and installs the right Python automatically — no
 separate `pyenv` or system Python step needed.
@@ -47,3 +47,7 @@ docs/               design docs and implementation plans
 
 See [`docs/superpowers/specs/2026-05-25-python-course-design.md`](docs/superpowers/specs/2026-05-25-python-course-design.md)
 for the course design.
+
+## Contributing
+
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the lesson conventions and dev workflow.

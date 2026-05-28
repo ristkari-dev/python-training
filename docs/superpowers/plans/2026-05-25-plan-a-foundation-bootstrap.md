@@ -1326,8 +1326,8 @@ help: ## List available targets
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  \033[36m%-22s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
 .PHONY: sync
-sync: ## Install/refresh the workspace venv (uv sync)
-	uv sync
+sync: ## Install/refresh the workspace venv (uv sync --all-packages)
+	uv sync --all-packages
 
 .PHONY: test
 test: ## Run solution tests (the ones that should always pass)
@@ -1369,6 +1369,8 @@ slides-dev: ## Serve one lesson's deck locally on http://localhost:8000 (LESSON=
 	@test -n "$(LESSON)" || (echo "usage: make slides-dev LESSON=NN-name" && exit 1)
 	uv run python -m slides_dev --lesson $(LESSON) --repo-root $(REPO_ROOT)
 ```
+
+> **Why `--all-packages`:** the workspace root has `[tool.uv] package = false`, so plain `uv sync` only resolves the root's dev-group dependencies. Workspace members (e.g. `new-lesson`, `slides-dev`) are installed only when `--all-packages` is passed. Without this flag, `make sync` would silently uninstall the tools from the venv and `make new-lesson` / `make slides-dev` would fail with `ModuleNotFoundError`.
 
 > **Why `find` instead of glob in `test`:** `lessons/` may be empty during early development (it is, after Plan A). A bare `pytest lessons/*/solutions` would fail with "no such path". `find` returns nothing, which the shell skips.
 
