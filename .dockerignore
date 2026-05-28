@@ -1,0 +1,16 @@
+# Build context exclusions for deploy/Dockerfile (COPY . .)
+.venv/
+venv/
+env/
+dist/
+build/
+*.egg-info/
+.git/
+.github/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.DS_Store
+docs/
