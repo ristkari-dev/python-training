@@ -46,7 +46,7 @@ def greet(name: str) -> str:
 ```
 
 - `def` defines a function
-- `name: str -> str` are type hints
+- `name: str` and `-> str` are type hints — parameter and return type
 - `f"..."` is an f-string — `{name}` is substituted
 
 ---
