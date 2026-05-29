@@ -33,10 +33,7 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     server = HTTPServer((args.host, args.port), handler)
-    print(
-        f"serving lesson {args.lesson} on http://{args.host}:{args.port} "
-        f"(Ctrl-C to stop)"
-    )
+    print(f"serving lesson {args.lesson} on http://{args.host}:{args.port} (Ctrl-C to stop)")
     try:
         server.serve_forever()
     except KeyboardInterrupt:

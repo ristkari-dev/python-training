@@ -46,9 +46,7 @@ def scaffold(name: str, lessons_dir: Path) -> Path:
     return target
 
 
-def _copy_with_substitution(
-    source: Path, target: Path, substitutions: dict[str, str]
-) -> None:
+def _copy_with_substitution(source: Path, target: Path, substitutions: dict[str, str]) -> None:
     target.mkdir(parents=True, exist_ok=False)
     for entry in source.iterdir():
         if entry.is_dir():
