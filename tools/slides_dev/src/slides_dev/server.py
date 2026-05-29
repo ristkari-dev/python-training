@@ -13,15 +13,11 @@ def resolve_lesson(repo_root: Path, lesson: str) -> Path:
     lesson_dir = repo_root / "lessons" / lesson
     slides_dir = lesson_dir / "slides"
     if not slides_dir.is_dir():
-        raise FileNotFoundError(
-            f"no slides for lesson {lesson!r} (expected {slides_dir})"
-        )
+        raise FileNotFoundError(f"no slides for lesson {lesson!r} (expected {slides_dir})")
     return lesson_dir
 
 
-def build_handler(
-    repo_root: Path, lesson: str
-) -> type[BaseHTTPRequestHandler]:
+def build_handler(repo_root: Path, lesson: str) -> type[BaseHTTPRequestHandler]:
     """Return a handler class wired to serve one lesson + shared assets."""
     lesson_dir = resolve_lesson(repo_root, lesson)
     slides_root = lesson_dir / "slides"
@@ -54,15 +50,11 @@ def _resolve(path: str, slides_root: Path, shared_root: Path) -> Path | None:
         candidate = slides_root / "index.html"
         return candidate if candidate.is_file() else None
     if path.startswith("shared/reveal/"):
-        candidate = shared_root / path[len("shared/reveal/"):]
+        candidate = shared_root / path[len("shared/reveal/") :]
     else:
         candidate = slides_root / path
     candidate = candidate.resolve()
-    base = (
-        shared_root.resolve()
-        if path.startswith("shared/reveal/")
-        else slides_root.resolve()
-    )
+    base = shared_root.resolve() if path.startswith("shared/reveal/") else slides_root.resolve()
     # Path traversal guard: candidate must stay under its base.
     try:
         candidate.relative_to(base)

@@ -57,35 +57,25 @@ def running_server(tmp_path: Path) -> Iterator[tuple[str, HTTPServer]]:
 
 
 class TestHandler:
-    def test_root_serves_lesson_index(
-        self, running_server: tuple[str, HTTPServer]
-    ) -> None:
+    def test_root_serves_lesson_index(self, running_server: tuple[str, HTTPServer]) -> None:
         url, _ = running_server
         with urllib.request.urlopen(f"{url}/") as resp:
             assert resp.status == 200
             assert b"hello deck" in resp.read()
 
-    def test_slides_md_served(
-        self, running_server: tuple[str, HTTPServer]
-    ) -> None:
+    def test_slides_md_served(self, running_server: tuple[str, HTTPServer]) -> None:
         url, _ = running_server
         with urllib.request.urlopen(f"{url}/slides.md") as resp:
             assert resp.status == 200
             assert b"# slides" in resp.read()
 
-    def test_shared_reveal_served(
-        self, running_server: tuple[str, HTTPServer]
-    ) -> None:
+    def test_shared_reveal_served(self, running_server: tuple[str, HTTPServer]) -> None:
         url, _ = running_server
-        with urllib.request.urlopen(
-            f"{url}/shared/reveal/dist/reveal.css"
-        ) as resp:
+        with urllib.request.urlopen(f"{url}/shared/reveal/dist/reveal.css") as resp:
             assert resp.status == 200
             assert b"/* reveal */" in resp.read()
 
-    def test_unknown_path_404(
-        self, running_server: tuple[str, HTTPServer]
-    ) -> None:
+    def test_unknown_path_404(self, running_server: tuple[str, HTTPServer]) -> None:
         url, _ = running_server
         with pytest.raises(urllib.error.HTTPError) as exc:
             urllib.request.urlopen(f"{url}/nope.txt")
@@ -111,10 +101,7 @@ class TestResolveGuard:
         secret = tmp_path / "secret.txt"
         secret.write_text("top secret")
         # Climbing out via the shared/reveal/ prefix must also be rejected.
-        assert (
-            _resolve("shared/reveal/../../../secret.txt", slides_root, shared_root)
-            is None
-        )
+        assert _resolve("shared/reveal/../../../secret.txt", slides_root, shared_root) is None
 
     def test_legitimate_nested_path_resolves(self, tmp_path: Path) -> None:
         slides_root = tmp_path / "lessons" / "01-hello" / "slides"

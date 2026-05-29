@@ -20,6 +20,11 @@ select = ["E", "W", "F", "I", "UP", "B", "SIM", "TID"]
 [tool.ruff.lint.flake8-tidy-imports]
 ban-relative-imports = "all"
 
+[tool.ruff.lint.per-file-ignores]
+# template.py holds the landing page as embedded HTML/CSS string constants;
+# line length doesn't apply to that content.
+"tools/build_index/src/build_index/template.py" = ["E501"]
+
 [tool.ruff.format]
 quote-style = "double"
 

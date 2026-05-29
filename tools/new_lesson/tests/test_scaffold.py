@@ -20,14 +20,14 @@ class TestParseName:
     @pytest.mark.parametrize(
         "raw",
         [
-            "1-hello",            # number must be two digits
-            "001-hello",          # number must be two digits
-            "01_hello",           # underscore, not kebab
-            "01-Hello",           # uppercase in slug
-            "hello",              # no number
-            "01-",                # empty slug
-            "",                   # empty
-            "01-hello/extra",     # slash not allowed
+            "1-hello",  # number must be two digits
+            "001-hello",  # number must be two digits
+            "01_hello",  # underscore, not kebab
+            "01-Hello",  # uppercase in slug
+            "hello",  # no number
+            "01-",  # empty slug
+            "",  # empty
+            "01-hello/extra",  # slash not allowed
         ],
     )
     def test_rejects_invalid_names(self, raw: str) -> None:
