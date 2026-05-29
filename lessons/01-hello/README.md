@@ -1,0 +1,27 @@
+# Lesson 01 — Hello
+
+## Learning goals
+
+- TODO: 3-5 bullets.
+
+## Prereqs
+
+- TODO: links to earlier lessons.
+
+## Concepts
+
+TODO: 1-3 paragraphs mirroring the deck narrative for self-study.
+
+## Exercise brief
+
+TODO: what students build; what `pytest` should show when done.
+
+## How to run
+
+```bash
+uv run pytest lessons/01-hello/exercises
+```
+
+## Going further
+
+- TODO: optional advanced material.
