@@ -32,8 +32,8 @@ jobs:
       - name: Type-check (mypy)
         run: uv run mypy tools/new_lesson/src tools/slides_dev/src tools/build_index/src
 
-      - name: Tool tests
-        run: uv run pytest tools
+      - name: Tests (tools + lesson solutions)
+        run: make test
 
       - name: Build static slides site
         run: make slides-build
