@@ -39,7 +39,7 @@ fmt: ## Format with ruff format + ruff check --fix
 
 .PHONY: typecheck
 typecheck: ## Run mypy on tools and lesson solutions
-	uv run mypy tools/new_lesson/src tools/slides_dev/src
+	uv run mypy tools/new_lesson/src tools/slides_dev/src tools/build_index/src
 
 .PHONY: new-lesson
 new-lesson: ## Scaffold a new lesson (NAME=NN-name)
