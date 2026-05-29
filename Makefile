@@ -13,20 +13,28 @@ sync: ## Install/refresh the workspace venv (uv sync --all-packages)
 
 .PHONY: test
 test: ## Run tool + lesson-solution tests (the ones that should always pass)
-	@dirs=$$(find lessons -type d -name solutions 2>/dev/null); \
-	if [ -z "$$dirs" ]; then echo "no solution directories yet"; else uv run pytest tools $$dirs; fi
+	uv run pytest tools
+	@for d in $$(find lessons -mindepth 1 -maxdepth 1 -type d 2>/dev/null | sort); do \
+		if [ -d "$$d/solutions" ]; then \
+			echo "== $$d/solutions =="; \
+			( cd "$$d" && uv run pytest solutions ) || exit 1; \
+		fi; \
+	done
 
 .PHONY: test-exercises
 test-exercises: ## Run exercise tests (these fail by design until students complete them)
-	-@dirs=$$(find lessons -type d -name exercises 2>/dev/null); \
-	if [ -z "$$dirs" ]; then echo "no exercise directories yet"; exit 0; fi; \
-	uv run pytest $$dirs
+	@for d in $$(find lessons -mindepth 1 -maxdepth 1 -type d 2>/dev/null | sort); do \
+		if [ -d "$$d/exercises" ]; then \
+			echo "== $$d/exercises =="; \
+			( cd "$$d" && uv run pytest exercises ) || true; \
+		fi; \
+	done
 
 .PHONY: test-lesson
 test-lesson: ## Run tests for one lesson, both exercises and solutions (LESSON=NN-name)
 	@test -n "$(LESSON)" || (echo "usage: make test-lesson LESSON=NN-name" && exit 1)
-	-uv run pytest lessons/$(LESSON)/exercises
-	uv run pytest lessons/$(LESSON)/solutions
+	-( cd lessons/$(LESSON) && uv run pytest exercises )
+	( cd lessons/$(LESSON) && uv run pytest solutions )
 
 .PHONY: lint
 lint: ## Run ruff check
