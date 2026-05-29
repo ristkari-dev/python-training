@@ -10,6 +10,7 @@ resolution-markers = [
 members = [
     "build-index",
     "lesson-01-hello",
+    "lesson-02-variables",
     "new-lesson",
     "python-training",
     "slides-dev",
@@ -82,6 +83,11 @@ wheels = [
 name = "lesson-01-hello"
 version = "0.0.0"
 source = { virtual = "lessons/01-hello" }
+
+[[package]]
+name = "lesson-02-variables"
+version = "0.0.0"
+source = { virtual = "lessons/02-variables" }
 
 [[package]]
 name = "librt"
