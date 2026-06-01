@@ -57,6 +57,18 @@ class TestScaffold:
         index = (lesson_dir / "slides" / "index.html").read_text()
         assert "<title>Lesson 99 — Demo</title>" in index
 
+    def test_index_html_uses_absolute_shared_paths(self, tmp_path: Path) -> None:
+        # Shared reveal.js assets must be referenced with absolute paths so
+        # they resolve at the deployed /lessons/NN/slides/ layout. Relative
+        # "../../shared/reveal/" paths resolve to /lessons/shared/reveal/ there
+        # (404) and the deck renders blank — only the local slides_dev server,
+        # which serves a deck at the root, masks the bug.
+        lessons = tmp_path / "lessons"
+        lesson_dir = scaffold("99-demo", lessons)
+        index = (lesson_dir / "slides" / "index.html").read_text()
+        assert "/shared/reveal/" in index
+        assert "../shared/reveal" not in index
+
     def test_renders_exercises_and_solutions(self, tmp_path: Path) -> None:
         lessons = tmp_path / "lessons"
         lesson_dir = scaffold("99-demo", lessons)
