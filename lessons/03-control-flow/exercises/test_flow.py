@@ -25,6 +25,14 @@ def test_grade_f() -> None:
     assert letter_grade(40) == "F"
 
 
+def test_grade_b_ceiling() -> None:
+    assert letter_grade(89) == "B"
+
+
+def test_grade_c_ceiling() -> None:
+    assert letter_grade(79) == "C"
+
+
 def test_count_vowels_basic() -> None:
     assert count_vowels("hello") == 2
 
