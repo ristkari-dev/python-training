@@ -24,6 +24,10 @@ ban-relative-imports = "all"
 # template.py holds the landing page as embedded HTML/CSS string constants;
 # line length doesn't apply to that content.
 "tools/build_index/src/build_index/template.py" = ["E501"]
+# Lesson solutions deliberately use explicit if/else blocks to model the
+# control-flow constructs being taught; SIM108 would push them to ternaries
+# that beginners haven't met yet.
+"lessons/**" = ["SIM108"]
 
 [tool.ruff.format]
 quote-style = "double"
