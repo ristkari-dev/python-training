@@ -12,6 +12,7 @@ members = [
     "lesson-01-hello",
     "lesson-02-variables",
     "lesson-03-control-flow",
+    "lesson-04-functions",
     "new-lesson",
     "python-training",
     "slides-dev",
@@ -94,6 +95,11 @@ source = { virtual = "lessons/02-variables" }
 name = "lesson-03-control-flow"
 version = "0.0.0"
 source = { virtual = "lessons/03-control-flow" }
+
+[[package]]
+name = "lesson-04-functions"
+version = "0.0.0"
+source = { virtual = "lessons/04-functions" }
 
 [[package]]
 name = "librt"
