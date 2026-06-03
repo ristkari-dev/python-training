@@ -1,6 +1,6 @@
 def power(base: float, exp: float = 2.0) -> float:
     """Return base raised to exp. exp defaults to 2 (squaring)."""
-    return base**exp
+    return float(base**exp)
 
 
 def total(*numbers: float) -> float:
