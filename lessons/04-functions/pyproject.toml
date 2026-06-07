@@ -1,0 +1,11 @@
+[project]
+name = "lesson-04-functions"
+version = "0.0.0"
+description = "Lesson 04: Functions"
+requires-python = ">=3.13"
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
