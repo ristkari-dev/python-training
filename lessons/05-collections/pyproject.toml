@@ -1,0 +1,11 @@
+[project]
+name = "lesson-05-collections"
+version = "0.0.0"
+description = "Lesson 05: Collections"
+requires-python = ">=3.13"
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
