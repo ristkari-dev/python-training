@@ -40,6 +40,7 @@ math.hypot(3, 4)   # 5.0
 import math                     # whole module: math.sqrt(9)
 from math import sqrt           # one name: sqrt(9)
 from math import sqrt as root   # rename on import
+import statistics as stats      # rename a module: stats.mean([1, 2])
 from geom.points import Point   # a name from a package module
 ```
 
@@ -90,6 +91,10 @@ Relative imports only work **inside** a package. This repo (like many others) pr
 **absolute** imports for clarity, and its linter enforces that — so the exercise uses
 absolute imports throughout.
 
+In this lesson the lesson folder (`lessons/07-modules/`) is on `sys.path`, so the full
+absolute path is `exercises.geom.points` (or `solutions.geom.points`); the examples
+above shorten it to `geom`.
+
 ### The standard library
 
 Python ships "batteries included" — a large standard library you can import without
@@ -98,8 +103,8 @@ installing anything: `math`, `random`, `pathlib`, `json`, `datetime`, `statistic
 
 ### Gotcha: don't shadow stdlib names
 
-If you name your own file `math.py`, then `import math` finds *yours* instead of the
-standard library's. Avoid standard-library names for your own modules.
+If you name your own file `random.py`, then `import random` finds *yours* instead of
+the standard library's. Avoid standard-library names for your own modules.
 
 ## Exercise
 
@@ -113,6 +118,10 @@ Build the `geom` package in `exercises/geom/` so the tests pass:
 
 Until `__init__.py` re-exports them, the test file's top import fails and every test is
 red.
+
+Tip: you can wire `__init__.py` first — the stubs already define all three names, so
+the tests then collect and report `midpoint` and `distance` separately as you
+implement them.
 
 ## How to run
 
@@ -130,9 +139,10 @@ uv run pytest exercises          # your work — fails until implemented
 uv run pytest solutions          # the reference — passes
 ```
 
-Try the finished package from a one-liner (run from `lessons/07-modules/`):
+Try the finished package from a one-liner:
 
 ```bash
+cd lessons/07-modules
 uv run python -c "from solutions.geom import Point, distance; print(distance(Point(0, 0), Point(3, 4)))"
 # 5.0
 ```

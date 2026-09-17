@@ -27,6 +27,7 @@ math.hypot(3, 4)   # 5.0
 import math                     # whole module
 from math import sqrt           # one name
 from math import sqrt as root   # rename
+import statistics as stats      # rename a module
 from geom.points import Point   # from a package module
 ```
 
@@ -76,7 +77,7 @@ __all__ = ["Point", "distance", "midpoint"]
 ```python
 # metrics.py
 import math
-from geom.points import Point
+from exercises.geom.points import Point
 
 def distance(a: Point, b: Point) -> float:
     return math.hypot(a.x - b.x, a.y - b.y)
@@ -109,16 +110,16 @@ from .points import Point       # relative
 ## Gotchas
 
 - Top-level code runs on **first import** — keep it cheap
-- Don't name a file `math.py` — it shadows the stdlib
-- Circular imports (a imports b imports a) fail — keep dependencies one-way
+- Don't name a file `random.py` — it shadows the stdlib
+- Circular imports (a imports b imports a) can fail — keep dependencies one-way
 - Guard scripts with `if __name__ == "__main__":`
 
 ---
 
 ## Your turn
 
-- Implement `midpoint` in `points.py`, `distance` in `metrics.py`
-- Wire `__init__.py` to re-export `Point`, `midpoint`, `distance`
+- Implement `midpoint` in `exercises/geom/points.py`, `distance` in `exercises/geom/metrics.py`
+- Wire `exercises/geom/__init__.py` to re-export `Point`, `midpoint`, `distance` (absolute: `from exercises.geom.points import ...`)
 - `make test-lesson LESSON=07-modules` until green
 
 ---
