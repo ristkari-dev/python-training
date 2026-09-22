@@ -56,17 +56,15 @@ reporting/ ──┘
 
 ```python
 SEPARATOR = "|"
-
 # write
 f"{e.date}{SEPARATOR}{e.category}{SEPARATOR}{e.amount:.2f}"
-
 # read
 parts = [p.strip() for p in line.strip().split(SEPARATOR)]
 date, category, amount = parts
 ```
 
-- One constant, so the writer and the reader cannot disagree
-- `Expense` is a `@dataclass`; the date is a `str` — no hidden clock
+- One constant — writer and reader cannot disagree
+- `Expense` is a `@dataclass`, the date a `str`
 
 ---
 
@@ -82,8 +80,8 @@ with open(path, "w", encoding="utf-8") as f:
 
 - `"w"` replaces the file, `"a"` appends
 - `write()` does not add the line break — you do
-- `text.splitlines()` — no phantom empty last line
-- `with` closes the file even when something goes wrong
+- `text.splitlines()` — no phantom last line
+- `with` closes the file even if something fails
 - *Lesson 13 shows how `with` actually works*
 
 ---
@@ -91,9 +89,8 @@ with open(path, "w", encoding="utf-8") as f:
 ## Lines that aren't expenses
 
 - blank line
-- too few fields / too many fields
-- empty date / empty category
-- an amount that is not a plain number: `lots`, `-5.00`
+- too few / too many fields; empty date or category
+- an amount that is not a number: `lots`, `-5.00`
 
 ```python
 if not os.path.exists(path):   # no file yet? not an error
@@ -101,7 +98,7 @@ if not os.path.exists(path):   # no file yet? not an error
 ```
 
 - `parse_line` returns `None`; the loader skips it
-- A plain `if`, not `try`/`except` — that is Lesson 11
+- A plain `if`, not `try`/`except` — Lesson 11
 - *The skipped line is gone after your next `add` — is that OK?*
 
 ---
@@ -125,9 +122,6 @@ print(format_table(rows, ["CATEGORY", "TOTAL"]))  # rows first!
 
 ```python
 totals[category] = totals.get(category, 0.0) + amount
-
-for name in sorted(totals):
-    ...
 ```
 
 - Money in `float` is a lie — we only *display* it, via `format_money`
@@ -142,17 +136,16 @@ for name in sorted(totals):
 ```python
 parser.add_argument("--file", default=DEFAULT_PATH, help="...")
 subparsers = parser.add_subparsers(dest="command", required=True)
-
 add = subparsers.add_parser("add", help="record a new expense")
 add.add_argument("date", help="the date, e.g. 2026-09-21")
 add.add_argument("category", help="the category, e.g. groceries")
 add.add_argument("amount", help="the amount, e.g. 24.50")
 ```
 
-- Positional = required, by position; `--option` = optional, by name
-- `--file` is global and goes **first**, before the subcommand
+- Positional = required; `--option` = optional
+- `--file` is global and goes **first**
 - `--help` is free; a bad command line exits `2`
-- *`amount` is a plain string, not `type=float` — whose error message is it?*
+- *Not `type=float` — whose error message is it?*
 
 ---
 
@@ -169,9 +162,9 @@ if __name__ == "__main__":
 ```
 
 - A list of strings in, an exit code out
-- That is why every test calls `main([...])` — no terminal, no subprocess
-- `tmp_path`, `capsys`, `pytest.raises(SystemExit)`
-- `0` success · `1` we rejected your value · `2` argparse rejected your command line
+- Every test calls `main([...])` — no subprocess
+- `tmp_path`, `capsys`, `pytest.raises`
+- `0` ok · `1` we rejected it · `2` argparse did
 
 ---
 
@@ -193,7 +186,7 @@ All of it, in the program you finish today.
 
 - Start: `uv run pytest exercises -q --tb=line` → `39 failed, 2 passed`
 - The 2 that pass are the library you were given
-- Ladder: `format_line` → `parse_line` → load/save → filter → `build_parser` → `--help`
+- Ladder: one function at a time, green in minutes
 - Core: storage, `build_parser`, `add`. Stretch: `list`, totals, `report`
 - `make test-lesson LESSON=08-capstone-cli` until green
 
