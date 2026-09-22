@@ -1,0 +1,27 @@
+# Lesson 08 — Capstone Cli
+
+## Learning goals
+
+- TODO: 3-5 bullets.
+
+## Prereqs
+
+- TODO: links to earlier lessons.
+
+## Concepts
+
+TODO: 1-3 paragraphs mirroring the deck narrative for self-study.
+
+## Exercise brief
+
+TODO: what students build; what `pytest` should show when done.
+
+## How to run
+
+```bash
+uv run pytest lessons/08-capstone-cli/exercises
+```
+
+## Going further
+
+- TODO: optional advanced material.

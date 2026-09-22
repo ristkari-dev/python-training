@@ -16,6 +16,7 @@ members = [
     "lesson-05-collections",
     "lesson-06-classes",
     "lesson-07-modules",
+    "lesson-08-capstone-cli",
     "new-lesson",
     "python-training",
     "slides-dev",
@@ -118,6 +119,11 @@ source = { virtual = "lessons/06-classes" }
 name = "lesson-07-modules"
 version = "0.0.0"
 source = { virtual = "lessons/07-modules" }
+
+[[package]]
+name = "lesson-08-capstone-cli"
+version = "0.0.0"
+source = { virtual = "lessons/08-capstone-cli" }
 
 [[package]]
 name = "librt"
