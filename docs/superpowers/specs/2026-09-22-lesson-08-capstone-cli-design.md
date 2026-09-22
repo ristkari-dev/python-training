@@ -456,11 +456,16 @@ amounts sampled across the whole accepted range up to `MAX_DIGITS` → **0 misma
 written form was anything the reader refuses. It holds because `is_field` and `is_amount`
 gate the write side with exactly the predicates `parse_line` uses on the read side — one
 validator, both directions — and because `is_amount` counts the digits *before* the point,
-which is the half `format_line`'s `:.2f` cannot change. `"9" * 12` is accepted and
-round-trips; `"9" * 13` is refused at the door rather than written and silently dropped
-later. One shape stays open on purpose and becomes a Going further exercise, because
-`is_amount` validates the string the user typed and not the float it becomes: a third
-decimal is rounded on the way out (`add … tip 0.005` is stored as `0.01`).
+which bounds the field `format_line` writes. `"9" * 12` is accepted and round-trips;
+`"9" * 13` is refused at the door rather than written and silently dropped later. Two
+shapes stay open on purpose and become Going further exercises, both because `is_amount`
+validates the string the user typed and not the float it becomes: a third decimal is
+rounded on the way out (`add … tip 0.005` is stored as `0.01`), and that rounding can
+carry into the integer part, so the digit cap is not quite the half `:.2f` cannot change
+— `is_amount("999999999999.999")` is `True`, `f"{999999999999.999:.2f}"` is
+`1000000000000.00`, thirteen digits, which the reader then refuses. The carry band
+(`[999999999999.995, 1e12)` typed to sub-cent precision) is unreachable in practice and
+is left as the Going further question rather than a second check in the given one-liner.
 
 ### Edge cases, and where each is handled
 
@@ -472,7 +477,7 @@ decimal is rounded on the way out (`add … tip 0.005` is stored as `0.01`).
 | Too few / too many fields | `parse_line` | `if len(parts) != 3: return None` |
 | Empty date or category | `parse_line` | `is_field` |
 | Amount not a number (`lots`, `12,50`, `nan`, `-5.00`) | `parse_line` → `is_amount` | string check, no `try/except` |
-| Amount with more than 12 digits before the point | `parse_line` → `is_amount` | `len(text.split(".")[0]) <= MAX_DIGITS` — the half `:.2f` cannot change, so write and read agree |
+| Amount with more than 12 digits before the point | `parse_line` → `is_amount` | `len(text.split(".")[0]) <= MAX_DIGITS` — the cap bounds the text the user typed, so write and read agree except at the carry boundary noted above |
 | Human spacing (`" a \| b \| 1.00 "`) | `parse_line` | strip the line, then strip each field |
 | `\|` or a line break *typed by the user* | `main` → `is_field` | rejected with exit 1 **before any write** |
 | Amount written as `1200` | `format_line` | `f"{amount:.2f}"` → `1200.00` |
@@ -1245,10 +1250,14 @@ exercises, solutions).
      `decimal.Decimal` is the real answer.
    - `str.isdigit()` vs `isdecimal()` vs `isnumeric()` — why `is_amount` uses `isdecimal`
      (`"²".isdigit()` is `True`, but `float("²")` raises). Then read the other half of
-     `is_amount`: why does it count the digits *before* the point? Delete that check and
-     try a 20-digit amount — `float()` reads it, `format_line` writes it, and the next
-     `load` refuses it, so your `add` reports success for a line `list` cannot see and
-     your next `add` deletes it.
+     `is_amount`: it counts the digits *before* the point because `format_line` writes
+     the rounded float, so the cap bounds the written field and keeps `float()` nowhere
+     near `inf` (`float("9" * 400)` is `inf`, and `f"{inf:.2f}"` writes the literal
+     `inf`, which no `load` will take back). But the cap checks the text you *typed*,
+     not the line that gets *written* — try `add 2026-09-21 rent 999999999999.999`. It
+     prints `Added rent $1,000,000,000,000.00 on 2026-09-21.`, writes thirteen digits,
+     and then `list` says `No expenses found.` and your next `add` deletes the line.
+     Where should that check go instead?
    - `format_table` raises `ValueError` on a ragged row — a real library validates its
      input. Catching that is Lesson 11.
    - `argparse`: `type=`, `choices=`, `nargs=`, mutually exclusive groups, `%(prog)s`.

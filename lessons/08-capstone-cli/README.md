@@ -62,7 +62,8 @@ parsing visible.
 
 ### Strings are objects with methods
 
-The first string methods of the course, and `parse_line` needs all of them:
+The first string methods of the course, and `parse_line` and `load_expenses` need
+all of them:
 
 ```python
 "a|b|c".split("|")        # ['a', 'b', 'c']
@@ -132,7 +133,9 @@ checks the date and the category with `is_field` and the amount with `is_amount`
 **before anything is written**, and returns `1` with a message if either fails.
 
 The same two predicates guard the read side inside `parse_line` — one validator, both
-directions, which is why what the program writes is always something it can read back.
+directions, which is why an amount with at most two decimals always reads back exactly
+as it was written. (`is_amount` checks the text you typed, not the line that gets
+written — *Going further* has the one case where those differ.)
 That is also why `amount` is a plain string argument and not `type=float`: with
 `type=float`, argparse would accept `nan`, `inf` and `-0`, print a cheerful
 confirmation, write a line, and lose it on the next load. Whose error message should
@@ -151,7 +154,7 @@ print(format_table(rows, ["CATEGORY", "TOTAL"]))     # rows first, headers secon
 ```
 
 ```bash
-uv run python -c "from solutions.reporting import format_table; help(format_table)"
+uv run python -c "from exercises.reporting import format_table; help(format_table)"
 ```
 
 Every cell you hand `format_table` must already be a string — that is what
@@ -261,7 +264,7 @@ The tests pin exact output strings — read them as the spec for what you print.
   expenses.txt` — fails with
   `expenses: error: unrecognized arguments: --file expenses.txt` and exit code 2.
 - The `# noqa: F401` / `# noqa: F841` comments in `exercises/` mark names that are
-  deliberately unused *for now*. Delete each one once you use the name.
+  deliberately unused *for now*. Delete a pragma once you use every name on that line.
 - A `--file` path whose directory does not exist looks fine to `list` and `report` (they
   print "No expenses found." and exit 0) and then crashes on `add`.
 - A file the program cannot read at all still crashes with a traceback — an uncaught
@@ -300,7 +303,7 @@ Run these from `lessons/08-capstone-cli/`. Something goes green every few minute
 | 2 | `… -k parse_line` | 10 cases. The parametrized list *is* the spec for bad lines. |
 | 3 | `… -k "load or save or round_trip"` | 5 more. Then try it outside pytest: `uv run python -c "from exercises.storage import load_expenses; print(load_expenses('nope.txt'))"` → `[]` |
 | 4 | `uv run pytest exercises/test_expense.py -k filter` | 2 more. Pure functions, no I/O — the fastest wins in the lesson. |
-| 5 | `uv run pytest exercises/test_cli.py -k build_parser`, then `uv run python -m exercises.cli --help` | 3 more — 23 passing — and the thing prints real help while `main` still raises. It is a program now. |
+| 5 | `uv run pytest exercises/test_cli.py -k build_parser`, then `uv run python -m exercises.cli --help` | 3 more — 23 passing (the `build_parser` case, plus the 2 exit-code cases that reach argparse through `main`'s bare `parse_args`) — and the thing prints real help while `main` still raises. It is a program now. |
 | 6 | `… -k add` | 9 cases. The `add` branch of `main` lights its own tests. |
 | 7 | `uv run python -m exercises.cli --file my.txt add 2026-09-21 coffee 4.50` | Run your own program. `cat my.txt`. `echo $?`. |
 | 8 | self-study: `main`'s `list` branch, then `totals_by_category`, then `main`'s `report` branch | 4 cases, then 2, then 3 — the last 9, and the lesson is green. |
@@ -418,10 +421,14 @@ uv run python -c "from solutions.reporting import format_table; help(format_tabl
   `decimal.Decimal` is the real answer.
 - `str.isdigit()` vs `isdecimal()` vs `isnumeric()` — why `is_amount` uses `isdecimal`
   (`"²".isdigit()` is `True`, but `float("²")` raises). Then read the other half of
-  `is_amount`: why does it count the digits *before* the point? Delete that check and try
-  a 20-digit amount — `float()` reads it, `format_line` writes it, and the next `load`
-  refuses it, so your `add` reports success for a line `list` cannot see and your next
-  `add` deletes it.
+  `is_amount`: it counts the digits *before* the point because `format_line` writes the
+  rounded float, so the cap bounds the written field and keeps `float()` nowhere near
+  `inf` (`float("9" * 400)` is `inf`, and `f"{inf:.2f}"` writes the literal `inf`, which
+  no `load` will take back). But the cap checks the text you *typed*, not the line that
+  gets *written* — try `add 2026-09-21 rent 999999999999.999`. It prints
+  `Added rent $1,000,000,000,000.00 on 2026-09-21.`, writes thirteen digits, and then
+  `list` says `No expenses found.` and your next `add` deletes the line. Where should
+  that check go instead?
 - `format_table` raises `ValueError` on a ragged row — a real library validates its
   input. Catching that is Lesson 11.
 - `argparse`: `type=`, `choices=`, `nargs=`, mutually exclusive groups, `%(prog)s`.

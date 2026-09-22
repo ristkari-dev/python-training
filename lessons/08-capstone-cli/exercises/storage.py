@@ -31,8 +31,8 @@ def is_amount(text: str) -> bool:
 
     Given code. It rejects anything float() cannot read, anything with a sign
     or exponent, and anything with more than MAX_DIGITS digits before the
-    point, so that what we write is always something we can read back.
-    Lesson 11 rewrites this with try/except.
+    point, so that an amount with at most two decimals is always something we
+    can read back. Lesson 11 rewrites this with try/except.
     """
     return text.replace(".", "", 1).isdecimal() and len(text.split(".")[0]) <= MAX_DIGITS
 
