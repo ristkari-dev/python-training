@@ -31,3 +31,6 @@ htmlcov/
 .idea/
 .vscode/
 .DS_Store
+
+# Lesson 08 capstone: the learner's local expense file
+expenses.txt
